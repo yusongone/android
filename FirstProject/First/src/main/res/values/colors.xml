@@ -1,0 +1,14 @@
+<resources>
+
+    <color name="black_overlay">#66000000</color>
+
+    <color name="text_view_bg">#ff49ff23</color>
+
+
+    <color name="_333">#555</color>
+
+    <color name="red">#ffff1600</color>
+
+    <color name="ddd">#dddddd</color>
+
+</resources>
