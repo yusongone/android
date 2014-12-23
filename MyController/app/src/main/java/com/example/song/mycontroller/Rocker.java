@@ -23,6 +23,13 @@ public class Rocker extends View {
     public Rocker(Context context) {
         super(context);
     }
+    public Rocker(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+    public Rocker(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
 
     protected void onMeasure(int width,int height){
         //int a=2147483647;

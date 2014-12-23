@@ -28,7 +28,6 @@ public class MyBluetooth {
 
     public void conectToRemoteDevice(String _address){
         BluetoothDevice bluetoothDevice=mBluetoothAdapter.getRemoteDevice(address);
-        //disconnect();
         try {
             btSocket=bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
             btSocket.connect();
@@ -42,16 +41,8 @@ public class MyBluetooth {
         }
     }
 
-    public void sendData(){
-        byte[] buf=new byte[6];
-        buf[0]=0x24;
-        buf[1]=0x4D;
-        buf[2]=0x3C;
-        buf[3]=0x00;
-        buf[4]=0x64;
-        buf[5]=0x64;
+    public void sendData(byte[] buf){
         try {
-            //checkSum(buf);
             if(ops!=null){
                 ops.write(buf);
             }
@@ -59,27 +50,7 @@ public class MyBluetooth {
             e.printStackTrace();
         }
     }
-    /*
-    int read32() {
-        return (inBuf[p++] & 0xff) + ((inBuf[p++] & 0xff) << 8)
-                + ((inBuf[p++] & 0xff) << 16) + ((inBuf[p++] & 0xff) << 24);
-    }
 
-    int read16() {
-        return (inBuf[p++] & 0xff) + ((inBuf[p++]) << 8);
-    }
-
-    int read8() {
-        return inBuf[p++] & 0xff;
-    }
-    */
-    public void checkSum(byte[] buf){
-        byte z=buf[0];
-        for(int i=1;i<buf.length;i++){
-          z=(byte)(z^(buf[i]&0xff));
-        }
-        Log.e("sum",z+"");
-    }
     private void listenData(){
         final int receiveLength=500;
         final byte[] receiveByte=new byte[receiveLength];
@@ -120,6 +91,9 @@ public class MyBluetooth {
         }
     }
 
+    /*
+    *this method can find to paired Bluetooth devices;
+    * */
     public void initBluetooth(){
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -129,7 +103,7 @@ public class MyBluetooth {
             return;
         }
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-// If there are paired devices
+        // If there are paired devices
         if (pairedDevices.size() > 0) {
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
@@ -140,5 +114,4 @@ public class MyBluetooth {
         }
 
     }
-
 }
