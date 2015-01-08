@@ -9,6 +9,7 @@
     android:focusableInTouchMode="true">
     <com.example.song.mycontroller.Rocker
         android:id="@+id/left_rocker"
+        android:keepScreenOn="true"
         android:layout_width="0dp"
         android:layout_gravity="center_vertical"
         android:layout_height="match_parent"
@@ -29,11 +30,13 @@
             android:scaleType="fitCenter"
             android:layout_gravity="center_horizontal|top" />
 
-        <Button
+
+        <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button" />
+            android:text="AUX1"
+            android:id="@+id/AUX1"
+            android:layout_gravity="center_horizontal" />
 
         <ListView
             android:layout_width="match_parent"

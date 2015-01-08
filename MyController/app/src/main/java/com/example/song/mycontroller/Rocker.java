@@ -19,6 +19,8 @@ public class Rocker extends View {
     private Runnable runnable;
     private Rocker_center rc;
     private Paint p;
+    private float initx=0.5f;
+    private float inity=0.5f;
     private OnDataChange odc=null;
     public Rocker(Context context) {
         super(context);
@@ -33,6 +35,7 @@ public class Rocker extends View {
 
     protected void onMeasure(int width,int height){
         //int a=2147483647;
+        super.onMeasure(width, height);
         int _width=MeasureSpec.getSize(width);
         int _height=MeasureSpec.getSize(height);
 
@@ -41,10 +44,10 @@ public class Rocker extends View {
         setMeasuredDimension(_width,_height);
         DOM_width=_width;
         DOM_height=_height;
-        super.onMeasure(width, height);
         rc=new Rocker_center(DOM_width,DOM_height);
         p=new Paint();
         p.setAntiAlias(true);
+        rc.setPointPosition(initx*DOM_width,(1-inity)*DOM_height);
        // bindDefaultEvent();
     }
     @Override
@@ -75,6 +78,10 @@ public class Rocker extends View {
     public void reCenter(boolean bx,boolean by){
        rc.reCenter(bx,by);
     };
+    public void initValue(float valuex,float valuey){
+        initx=valuex;
+        inity=valuey;
+    }
     public void setRawDataChange(OnDataChange change){
         odc=change;
     }
@@ -97,6 +104,8 @@ public class Rocker extends View {
         private float pointY;
         private float outputX;
         private float outputY;
+        private float valueX;
+        private float valueY;
         private int whiteRectSize=150;
         private boolean dir=true;
         public Rocker_center(int width,int height){
@@ -120,6 +129,10 @@ public class Rocker extends View {
                 }
             }
         };
+        private void computeValue(){
+           valueX=pointX/max_x;
+           valueY=1-(pointY/max_y);
+        }
         public void setPointPosition(float x,float y){
             if(x>max_x){
                 pointX=max_x;
@@ -135,8 +148,9 @@ public class Rocker extends View {
             }else{
                 pointY=y;
             }
+            computeValue();
             if(odc!=null){
-                odc.onChange(pointX/max_x,pointY/max_y);
+                odc.onChange(valueX,valueY);
             }
         };
         public void reCenter(boolean x,boolean y){
@@ -156,12 +170,7 @@ public class Rocker extends View {
             this.drawStroke(p, canvas);
             this.drawPoint(p, canvas);
             this.drawText(p, canvas);
-            computeOutput();
         };
-        private void computeOutput(){
-           outputX=pointX/max_x;
-           outputY=1-pointY/max_y;
-        }
         private void drawStroke(Paint p,Canvas canvas){
             p.setARGB(255-(strokeWidth*255/50),250,200,200);
             canvas.drawCircle(pointX,pointY,strokeWidth,p);
@@ -179,8 +188,8 @@ public class Rocker extends View {
         private void drawText(Paint p,Canvas canvas){
             p.setARGB(255,250,0,0);
             p.setTextSize(20);
-            canvas.drawText("X: "+(int)(outputX*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+50:pointY-80, p);
-            canvas.drawText("Y: "+(int)(outputY*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+80:pointY-50, p);
+            canvas.drawText("X: "+(int)(valueX*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+50:pointY-80, p);
+            canvas.drawText("Y: "+(int)(valueY*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+80:pointY-50, p);
         };
         private void drawBorder(Paint p,Canvas canvas){
             p.setARGB(255,250,0,0);
