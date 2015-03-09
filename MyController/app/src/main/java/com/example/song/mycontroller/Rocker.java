@@ -58,6 +58,9 @@ public class Rocker extends View {
         }
         return true;
     }
+    public void setPointPosition(float Pitch,float Roll){
+        rc.setPointPosition(DOM_width/2+Pitch,DOM_height/2+Roll);
+    }
     protected void onDraw(Canvas canvas){
         rc.update();
         rc.draw(p,canvas);
