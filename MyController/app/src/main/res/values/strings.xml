@@ -10,5 +10,8 @@
     <string name="title_activity_remote">remote</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_osc_box">OSC_box</string>
+    <string name="title_activity_menu_activity">Menu_activity</string>
+    <string name="title_activity_single__rc">Single_RC</string>
 
 </resources>

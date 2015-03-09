@@ -23,6 +23,7 @@ public class Protocol{
     private int AUX3;
     private int AUX4;
     private MyBluetooth mbt;
+    private Thread sendDataThread;
     public Protocol(int min,int max,MyBluetooth _mbt){
         Range_min=min;
         Range_max=max;
@@ -65,8 +66,11 @@ public class Protocol{
        AUX3=_AUX1!=-1?computer(_AUX1):AUX3;
        AUX4=_AUX2!=-1?computer(_AUX2):AUX4;
     }
+    public void stopSendDataToMultiwii() {
+        sendDataThread.stop();
+    }
     public void keepSendDataToMultiwii(){
-        new Thread(new Runnable() {
+        sendDataThread=new Thread(new Runnable() {
             @Override
             public void run() {
                 while(!Thread.currentThread().isInterrupted()) {
@@ -80,7 +84,8 @@ public class Protocol{
                     }
                 }
             }
-        }).start();
+        });
+        sendDataThread.start();
     }
 
     private int computer(float bl){
