@@ -6,6 +6,7 @@
     tools:context=".MainActivity"
     android:orientation="horizontal"
     android:focusable="true"
+    android:background="@color/black"
     android:focusableInTouchMode="true">
     <com.example.song.mycontroller.Rocker
         android:id="@+id/left_rocker"
@@ -16,6 +17,7 @@
         style="@style/rocker"
         android:layout_weight="0.4" />
     <LinearLayout
+        android:background="@color/black"
         android:layout_weight="0.7"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -39,6 +41,7 @@
             android:layout_gravity="center_horizontal" />
 
         <ListView
+            android:background="@color/black"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/listView" />

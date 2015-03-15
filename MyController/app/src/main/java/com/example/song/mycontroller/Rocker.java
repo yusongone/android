@@ -2,6 +2,7 @@ package com.example.song.mycontroller;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -120,17 +121,20 @@ public class Rocker extends View {
             pointY=centerY;
         }
         public void update(){
-            if(dir&&strokeWidth<80){
-                strokeWidth+=1;
-                if(strokeWidth>=80){
-                    dir=false;
+            if(strokeWidth<120){
+                strokeWidth+=2;
+                if(strokeWidth>=120){
+                    strokeWidth=50;
                 }
-            }else if((!dir)&&strokeWidth>0){
+            }
+            /*
+            else if((!dir)&&strokeWidth>0){
                 strokeWidth-=1;
                 if(strokeWidth<=50){
                     dir=true;
                 }
             }
+            */
         };
         private void computeValue(){
            valueX=pointX/max_x;
@@ -175,35 +179,35 @@ public class Rocker extends View {
             this.drawText(p, canvas);
         };
         private void drawStroke(Paint p,Canvas canvas){
-            p.setARGB(255-(strokeWidth*255/50),250,200,200);
+            p.setARGB(255-(strokeWidth*255/120),30,240,255);
             canvas.drawCircle(pointX,pointY,strokeWidth,p);
         }
         private void drawPoint(Paint p,Canvas canvas){
-            p.setARGB(255,250,60,60);
+            p.setColor(getResources().getColor(R.color.blue_b));
             canvas.drawCircle(pointX,pointY,size,p);
         };
         private void drawCenter(Paint p,Canvas canvas){
-            p.setARGB(255,200,200,200);
-            canvas.drawCircle(centerX,centerY,20,p);
+            p.setColor(getResources().getColor(R.color.blue_b));
+            canvas.drawCircle(centerX, centerY, 20, p);
             Rect r=new Rect((int)centerX-30,(int)centerY-15,(int)centerX+30,(int)centerY+15);
             canvas.drawRect(r,p);
         };
         private void drawText(Paint p,Canvas canvas){
-            p.setARGB(255,250,0,0);
+            p.setColor(getResources().getColor(R.color.blue_a));
             p.setTextSize(20);
             canvas.drawText("X: "+(int)(valueX*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+50:pointY-80, p);
             canvas.drawText("Y: "+(int)(valueY*100)+"%", pointX>max_x-150?pointX-150:pointX+80,pointY<100?pointY+80:pointY-50, p);
         };
         private void drawBorder(Paint p,Canvas canvas){
-            p.setARGB(255,250,0,0);
+            p.setColor(getResources().getColor(R.color.blue_b));
             p.setStrokeWidth(20);
-            Rect r=new Rect(0,0,max_x,max_y);
-            canvas.drawRect(r, p);
-            p.setARGB(255, 255, 200, 200);
+            RectF rf=new RectF(0,0,max_x,max_y);
+            canvas.drawRoundRect(rf,0,0,p);
+            p.setColor(getResources().getColor(R.color.blue_a));
             Rect r2=new Rect(5,5,max_x-5,max_y-5);
-            canvas.drawRect(r2,p);
-            p.setARGB(255,255,255,255);
-            Rect r3=new Rect(15,15,max_x-15,max_y-15);
+            canvas.drawRect(r2, p);
+            p.setColor(getResources().getColor(R.color.black));
+            Rect r3=new Rect(10,10,max_x-10,max_y-10);
             canvas.drawRect(r3, p);
             Rect r4=new Rect((int)centerX-whiteRectSize,0,(int)centerX+whiteRectSize,max_y);
             canvas.drawRect(r4, p);
@@ -211,7 +215,7 @@ public class Rocker extends View {
             canvas.drawRect(r5,p);
         };
         private void drawCenterLine(Paint p,Canvas canvas){
-            p.setARGB(180,255,0,0);
+            p.setColor(getResources().getColor(R.color.blue_a));
             p.setStrokeWidth(2);
             canvas.drawLine(pointX,5,pointX,max_y-5,p);
             canvas.drawLine(5,pointY,max_x-5,pointY,p);

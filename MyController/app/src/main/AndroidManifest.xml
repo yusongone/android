@@ -5,7 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_SERVICE" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -42,6 +48,21 @@
         <activity
             android:name="com.example.song.mycontroller.Single_RC"
             android:label="@string/title_activity_single__rc" >
+        </activity>
+        <activity
+            android:name="com.example.song.mycontroller.IbeaconTest"
+            android:label="@string/title_activity_ibeacon_test" >
+        </activity>
+
+        <service
+            android:name="com.example.song.mycontroller.server.BT_Server"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name="com.example.song.mycontroller.BT"
+            android:label="@string/title_activity_bt" >
         </activity>
     </application>
 

@@ -18,6 +18,7 @@ import java.util.UUID;
 public class MyBluetooth {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String address="00:11:06:03:02:27";
+    //String address="78:A5:04:3E:C5:AD";
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket btSocket=null;
     OutputStream ops=null;
@@ -34,7 +35,7 @@ public class MyBluetooth {
             Log.e("blueTooth", ""+btSocket.isConnected());
             if(btSocket.isConnected()){
                 ops=btSocket.getOutputStream();
-                listenData();
+                //listenData();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,6 +113,5 @@ public class MyBluetooth {
                 // mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         }
-
     }
 }
