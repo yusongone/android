@@ -32,17 +32,17 @@ public class BT_Server extends Service {
     private OnDataChange odc=null;
     private BluetoothAdapter mBluetoothAdapter;
     private Handler mHandler;
-    private Handler mActiveHandler;
     private BluetoothAdapter.LeScanCallback  leScanCallback;
     private BluetoothManager bluetoothManager;
     private BluetoothGattCallback bluetoothGattCallback;
     private NotificationManager nm;
-    private Thread t;
+    private boolean contented=false;
     private boolean mScanning=false;
 
     private UUID MY_UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
     private BluetoothGattCharacteristic serialChara=null;
     private BluetoothGatt serialGatt=null;
+    private Message msg;
 
 
 
@@ -51,14 +51,8 @@ public class BT_Server extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        initBluetooth();
+        //initBluetooth();
         return binder;
-    }
-
-    public void contentToDevice(){
-        if(serialGatt!=null){
-           serialGatt.connect();
-        }
     }
 
     public void onDataChange(OnDataChange cdc){
@@ -70,15 +64,22 @@ public class BT_Server extends Service {
         super.onCreate();
         binder=new BT_binder();
         mHandler=new Handler();
-        mActiveHandler=new Handler();
+        Log.e("create","---------------------");
+        initBluetooth();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Message msg=new Message();
+        msg=new Message();
         msg.obj=BT_Server.this;
         BT.handler.sendMessage(msg);
-        initBluetooth();
+        if((!mScanning)&&(!contented)){
+            Log.e("-----------------------","i will scan");
+            if(serialGatt!=null){
+                serialGatt.close();
+            };
+            scanLeDevice(true);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -92,6 +93,7 @@ public class BT_Server extends Service {
     }
 
     public void initBluetooth(){
+        Log.e("--------","initBluetooth");
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Log.e("Error","system has no feature of BLE");
             return;
@@ -111,14 +113,12 @@ public class BT_Server extends Service {
                 String name=device.getName();
                 if(name.equals("HMSoft")){
                     scanLeDevice(false);
-                    device.connectGatt(BT_Server.this,false,bluetoothGattCallback);
+
+                    device.connectGatt(BT_Server.this,true,bluetoothGattCallback);
                 }
             }
         };
 
-        if(!mScanning){
-            scanLeDevice(true);
-        }
 
         bluetoothGattCallback=new BluetoothGattCallback() {
             @Override
@@ -126,8 +126,12 @@ public class BT_Server extends Service {
                 super.onConnectionStateChange(gatt, status, newState);
                 serialGatt=gatt;
                 if(newState==2){// contented;
+                    contented=true;
+                    Log.e("----","connect--ed");
                     gatt.discoverServices();
                 }else{
+                    contented=false;
+                    Log.e("----","stop content");
                     AlertDiscontent();
                 }
             }
@@ -146,7 +150,6 @@ public class BT_Server extends Service {
                             break;
                         };
                     }
-
                 }
             }
 
@@ -159,12 +162,12 @@ public class BT_Server extends Service {
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
                 super.onCharacteristicChanged(gatt, characteristic);
+                Log.e("serial","----------------------");
                 byte[] b=characteristic.getValue();
-                Log.e("[[[[[[[[[[[[",b[0]+":"+b[1]+":"+b[2]);
+                Log.e("[[[[[[[[[[[[",b[0]+":"+b[1]+":"+b.length);
             }
         };
     }
-
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -184,45 +187,46 @@ public class BT_Server extends Service {
             mScanning = true;
             mBluetoothAdapter.startLeScan(leScanCallback);
         } else {
+            Log.e("stop","stop scan");
             mScanning = false;
             mBluetoothAdapter.stopLeScan(leScanCallback);
         }
     }
 
     public void KeepWriteToBlue(){
-        t=new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!Thread.currentThread().isInterrupted()){
+                while(contented){
                     //serialChara.setValue("fefe");
-
                     if(serialGatt!=null){
                         serialGatt.readRemoteRssi();
                     }
                     //serialGatt.writeCharacteristic(serialChara);
                     try {
-                        Thread.sleep(4000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             }
-        });
-        t.start();
+        }).start();
     }
     public void AlertDiscontent(){
-        Intent intent = new Intent(this, BT.class);
+        Intent intent = new Intent(this, Menu_activity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
         n  = new Notification.Builder(this)
                 .setContentTitle("连接断开")
                 .setContentText("已经和 BLE 设备断开")
                 .setSmallIcon(R.drawable.spider)
                 .setLights(250,250,250)
+                .setAutoCancel(true)
                 .setContentIntent(pIntent).build();
         n.defaults |= Notification.DEFAULT_ALL;
         nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         //startForeground(0,n);
         stopForeground(true);
+        //stopSelf();
         nm.notify(0, n);
     };
     public void AlertContented(){
